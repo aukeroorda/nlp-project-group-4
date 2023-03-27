@@ -19,7 +19,7 @@ def plot_losses(list_losses, title):
     """
     length_losses = len(list_losses)
     fig = plt.figure(figsize=(12, 8))
-    plt.plot(np.arange(1, length_losses+1), list_losses, label="loss")
+    plt.plot(np.arange(1, length_losses+1), list_losses, "o-", label="loss")
     plt.title(title, fontsize=20)
     plt.xlabel("epoch", fontsize=20)
     plt.ylabel("loss", fontsize=20)
