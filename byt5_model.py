@@ -98,7 +98,7 @@ def train_loop(morph_inflection_model, train_dataloader, optimizer, device, dir_
             optimizer.step()
         loss_for_epoch /= num_train_batches
         print(f"epoch: {epoch + 1} / {num_epochs}, loss: {loss:.4f}")
-        list_train_losses.append(loss_for_epoch)
+        list_train_losses.append(loss_for_epoch.cpu().detach().numpy())
 
     morph_inflection_model.save_pretrained(dir_path_model)
-    return np.array(list_train_losses.cpu().detach())
+    return np.array(list_train_losses)
