@@ -63,8 +63,9 @@ def get_dataloader(tokenized_data, batch_size=16):
     dataloader = DataLoader(MorphInflectionDataset(tokenized_data), shuffle=True, batch_size=batch_size, num_workers=4)
     return dataloader
 
-def get_tokenizer(model_name="google/byt5-small"):
+def get_tokenizer(dir_path_model, model_name="google/byt5-small"):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.save_pretrained(dir_path_model)
     return tokenizer
 
 def get_byt5_model(device, model_name="google/byt5-small", pretrained=True):
