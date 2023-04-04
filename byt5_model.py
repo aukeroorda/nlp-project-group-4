@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from torch.optim import AdamW
 from torch.utils.data import Dataset, DataLoader
-from transformers import AutoTokenizer, T5ForConditionalGeneration, T5Config
+from transformers import AutoTokenizer, T5ForConditionalGeneration, T5Config, T5Tokenizer
 
 
 def load_raw_data_as_df(dir_data, which_dataset="german", turkish_large=False, spaces=True):
@@ -94,7 +94,12 @@ def get_byt5_model(device, model_name="google/byt5-small", pretrained=True):
         morph_inflection_model = T5ForConditionalGeneration.from_pretrained(
             model_name).to(device)
     else:
-        config = T5Config()
+        t5_tokenizer = T5Tokenizer.from_pretrained('t5-small')
+        config = T5Config(vocab_size=t5_tokenizer.vocab_size,
+                          pad_token_id=t5_tokenizer.pad_token_id,
+                          eos_token_id=t5_tokenizer.eos_token_id,
+                          decoder_start_token_id=t5_tokenizer.convert_tokens_to_ids(["<pad>"])[0],
+                          d_model=300)
         morph_inflection_model = T5ForConditionalGeneration(config).to(device)
     return morph_inflection_model
 
