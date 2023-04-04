@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from transformers import AutoTokenizer, T5ForConditionalGeneration, T5Config
 
 
-def load_raw_data_as_df(dir_data, which_dataset="german"):
+def load_raw_data_as_df(dir_data, which_dataset="german", turkish_large=False, spaces=True):
     header_names = ["lemma", "labels", "features"]
 
     if which_dataset == "german":
@@ -15,7 +15,10 @@ def load_raw_data_as_df(dir_data, which_dataset="german"):
         file_valid = os.path.join(dir_data, "deu.dev")
         file_test = os.path.join(dir_data, "deu.gold")
     elif which_dataset == "turkish":
-        file_train = os.path.join(dir_data, "tur_small.train")
+        if turkish_large:
+            file_train = os.path.join(dir_data, "tur_large.train")
+        else:
+            file_train = os.path.join(dir_data, "tur_small.train")
         file_valid = os.path.join(dir_data, "tur.dev")
         file_test = os.path.join(dir_data, "tur.gold")
 
@@ -24,7 +27,10 @@ def load_raw_data_as_df(dir_data, which_dataset="german"):
     df_test = pd.read_csv(file_test, sep="\t", names=header_names)
 
     for df_variant in (df_train, df_valid, df_test):
-        df_variant["inputs"] = df_variant["lemma"] + df_variant["features"]
+        if spaces:
+            df_variant["inputs"] = df_variant["lemma"] + ' ' + df_variant["features"]
+        else:
+            df_variant["inputs"] = df_variant["lemma"] + df_variant["features"]
 
     return df_train, df_valid, df_test
 
