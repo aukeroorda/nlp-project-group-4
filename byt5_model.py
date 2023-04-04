@@ -28,7 +28,8 @@ def load_raw_data_as_df(dir_data, which_dataset="german", turkish_large=False, s
 
     for df_variant in (df_train, df_valid, df_test):
         if spaces:
-            df_variant["inputs"] = df_variant["lemma"] + ' ' + df_variant["features"]
+            df_variant["inputs"] = df_variant["lemma"] + \
+                ' ' + df_variant["features"]
         else:
             df_variant["inputs"] = df_variant["lemma"] + df_variant["features"]
 
@@ -74,9 +75,9 @@ def get_tokenized_data(tokenizer, df_train, df_valid, df_test):
     return tokenized_train, tokenized_valid, tokenized_test
 
 
-def get_dataloader(tokenized_data, batch_size=16, num_workers=4):
+def get_dataloader(tokenized_data, batch_size=16, num_workers=4, shuffle=True):
     dataloader = DataLoader(MorphInflectionDataset(tokenized_data),
-                            shuffle=True,
+                            shuffle=shuffle,
                             batch_size=batch_size,
                             num_workers=num_workers)
     return dataloader
@@ -106,41 +107,90 @@ def get_optimizer(morph_inflection_model, learning_rate):
 def train_loop(morph_inflection_model,
                train_dataloader,
                optimizer,
-               device,
-               dir_path_model,
-               num_epochs=20):
-    list_train_losses = []
+               device):
     num_train_batches = len(train_dataloader)
+    train_loss_for_epoch = 0.0
+    morph_inflection_model.train()
 
-    for epoch in range(num_epochs):
-        loss_for_epoch = 0.0
-        for input_ids, attention_mask, labels in train_dataloader:
+    for input_ids, attention_mask, labels in train_dataloader:
+        input_ids = input_ids.to(device)
+        attention_mask = attention_mask.to(device)
+        labels = labels.to(device)
+        optimizer.zero_grad()
+
+        outputs = morph_inflection_model(input_ids=input_ids,
+                                         attention_mask=attention_mask,
+                                         labels=labels)
+        loss = outputs.loss
+        train_loss_for_epoch += loss
+        loss.backward()
+        optimizer.step()
+    train_loss_for_epoch /= num_train_batches
+    return train_loss_for_epoch.cpu().detach().numpy()
+
+
+def valid_loop(morph_inflection_model,
+               valid_dataloader,
+               device):
+    num_valid_batches = len(valid_dataloader)
+    valid_loss_for_epoch = 0.0
+    morph_inflection_model.eval()
+
+    with torch.no_grad():
+        for input_ids, attention_mask, labels in valid_dataloader:
             input_ids = input_ids.to(device)
             attention_mask = attention_mask.to(device)
             labels = labels.to(device)
-            optimizer.zero_grad()
 
             outputs = morph_inflection_model(input_ids=input_ids,
                                              attention_mask=attention_mask,
                                              labels=labels)
             loss = outputs.loss
-            loss_for_epoch += loss
-            loss.backward()
-            optimizer.step()
-        loss_for_epoch /= num_train_batches
-        print(f"epoch: {epoch + 1} / {num_epochs}, loss: {loss:.4f}")
-        list_train_losses.append(loss_for_epoch.cpu().detach().numpy())
+            valid_loss_for_epoch += loss
+    valid_loss_for_epoch /= num_valid_batches
+    return valid_loss_for_epoch.cpu().detach().numpy()
 
-    morph_inflection_model.save_pretrained(dir_path_model)
-    return np.array(list_train_losses)
+
+def train_validation_loop(morph_inflection_model,
+                          train_dataloader,
+                          valid_dataloader,
+                          optimizer,
+                          device,
+                          dir_path_model,
+                          num_epochs=30):
+    list_train_losses = []
+    list_valid_losses = []
+    best_valid_loss = 0
+
+    for epoch in range(num_epochs):
+        train_loss_for_epoch = train_loop(
+            morph_inflection_model, train_dataloader, optimizer, device)
+        valid_loss_for_epoch = valid_loop(
+            morph_inflection_model, valid_dataloader, device)
+
+        print(f"epoch: {epoch + 1} / {num_epochs}, train loss: {train_loss_for_epoch:.4f}, validation loss: {valid_loss_for_epoch:.4f}")
+
+        list_train_losses.append(train_loss_for_epoch)
+        list_valid_losses.append(valid_loss_for_epoch)
+        if epoch != 0:
+            if best_valid_loss > valid_loss_for_epoch:
+                best_valid_loss = valid_loss_for_epoch
+                morph_inflection_model.save_pretrained(dir_path_model)
+        else:
+            best_valid_loss = valid_loss_for_epoch
+    list_train_losses = np.array(list_train_losses)
+    list_valid_losses = np.array(list_valid_losses)
+    return list_train_losses, list_valid_losses
 
 
 def generate(model_filepath, df_test, device, max_length=50):
-    gen_model = T5ForConditionalGeneration.from_pretrained(model_filepath, return_dict=True)
+    gen_model = T5ForConditionalGeneration.from_pretrained(
+        model_filepath, return_dict=True)
     gen_model.to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_filepath)
 
-    gen_inputs = tokenizer([f"{item}" for item in df_test["inputs"]], return_tensors="pt", padding=True).to(device)
+    gen_inputs = tokenizer([f"{item}" for item in df_test["inputs"]],
+                           return_tensors="pt", padding=True).to(device)
 
     outputs = gen_model.generate(
         input_ids=gen_inputs["input_ids"],
@@ -153,7 +203,8 @@ def generate(model_filepath, df_test, device, max_length=50):
 
 
 def comparer(df_test, gen_outputs, amount=20):
-    df_generated_comparison = pd.DataFrame.from_dict({"Expected": df_test["labels"], "Predicted": gen_outputs})
+    df_generated_comparison = pd.DataFrame.from_dict(
+        {"Expected": df_test["labels"], "Predicted": gen_outputs})
     print(df_generated_comparison.head(amount))
     return df_generated_comparison
 
