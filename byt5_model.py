@@ -133,3 +133,20 @@ def train_loop(morph_inflection_model,
 
     morph_inflection_model.save_pretrained(dir_path_model)
     return np.array(list_train_losses)
+
+
+def generate(model_filepath, df_test, device, max_length=50):
+    gen_model = T5ForConditionalGeneration.from_pretrained(model_filepath, return_dict=True)
+    gen_model.to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_filepath)
+
+    gen_inputs = tokenizer([f"{item}" for item in df_test["inputs"]], return_tensors="pt", padding=True).to(device)
+
+    outputs = gen_model.generate(
+        input_ids=gen_inputs["input_ids"],
+        attention_mask=gen_inputs["attention_mask"],
+        max_length=max_length,
+        do_sample=False
+    )
+
+    return tokenizer.batch_decode(outputs, skip_special_tokens=True)
