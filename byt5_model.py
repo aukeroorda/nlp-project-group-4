@@ -150,3 +150,26 @@ def generate(model_filepath, df_test, device, max_length=50):
     )
 
     return tokenizer.batch_decode(outputs, skip_special_tokens=True)
+
+
+def comparer(df_test, gen_outputs, amount=20):
+    df_generated_comparison = pd.DataFrame.from_dict({"Expected": df_test["labels"], "Predicted": gen_outputs})
+    print(df_generated_comparison.head(amount))
+    return df_generated_comparison
+
+
+def acc_score(pred: list, gold: list, dec: int=2):
+    outcomes = {'correct': [], 'incorrect': []}
+    for idx, i in enumerate(pred):
+        if i == gold[idx]:
+            outcomes['correct'].append([idx, i])
+        else:
+            outcomes['incorrect'].append([idx, i])
+
+    score = round(len(outcomes['correct']) / len(gold), dec)
+
+    print('The accuracy score is {}'.format(score))
+    print('\n\nThe incorrect items are:\n')
+    print('idx: pred - gold\n')
+    for x, y in outcomes['incorrect']:
+        print(f'{x}: {y} - {gold[x]}')
