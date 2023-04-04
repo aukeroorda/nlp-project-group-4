@@ -74,11 +74,11 @@ def get_tokenized_data(tokenizer, df_train, df_valid, df_test):
     return tokenized_train, tokenized_valid, tokenized_test
 
 
-def get_dataloader(tokenized_data, batch_size=16):
+def get_dataloader(tokenized_data, batch_size=16, num_workers=4):
     dataloader = DataLoader(MorphInflectionDataset(tokenized_data),
                             shuffle=True,
                             batch_size=batch_size,
-                            num_workers=4)
+                            num_workers=num_workers)
     return dataloader
 
 
