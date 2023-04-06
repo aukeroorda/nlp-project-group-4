@@ -29,17 +29,17 @@ def plot_losses(list_losses, title):
     plt.grid()
     return fig
 
-def plot_losses_2(list_losses_1, list_losses_2, title, label_1, label_2):
+def plot_losses_multi(list_losses, title, list_of_labels, start_epoch=0):
     """
     ---------
     Arguments
     ---------
-    list_losses_1: list or ndarray
-        a list or a numpy array of losses
-    list_losses_2: list or ndarray
-        a list or a numpy array of losses
+    list_losses_1: list of lists or ndarrays
+        a list of lists or numpy arrays of losses
     title: str
         title for the plot
+    list_of_labels: list of strings
+        a list of label strings
 
     -------
     Returns
@@ -47,10 +47,12 @@ def plot_losses_2(list_losses_1, list_losses_2, title, label_1, label_2):
     fig: matplotlib figure object
         returns a matplotlib figure object
     """
-    length_losses = len(list_losses_1)
+    num_plots = len(list_losses)
+    length_losses = len(list_losses[0])
+
     fig = plt.figure(figsize=(12, 8))
-    plt.plot(np.arange(1, length_losses+1), list_losses_1, "o-", label=label_1)
-    plt.plot(np.arange(1, length_losses+1), list_losses_2, "o-", label=label_2)
+    for i in range(num_plots):
+        plt.plot(np.arange(start_epoch+1, length_losses+1), list_losses[i][start_epoch:], "o-", label=list_of_labels[i])
     plt.title(title, fontsize=20)
     plt.xlabel("epoch", fontsize=20)
     plt.ylabel("loss", fontsize=20)
