@@ -214,7 +214,7 @@ def comparer(df_test, gen_outputs, amount=20):
     return df_generated_comparison
 
 
-def acc_score(pred: list, gold: list, dec: int=2):
+def acc_score(pred: list, gold: list, dec: int=4):
     outcomes = {'correct': [], 'incorrect': []}
     for idx, i in enumerate(pred):
         if i == gold[idx]:
