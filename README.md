@@ -28,30 +28,30 @@ For both languages (separately) we do the following:
 
 ## 1.4. Overview of the repository
 ```bash
- ./
-├──  byt5.ipynb
-├──  byt5_learning_curves_finetuning.ipynb
-├──  byt5_learning_curves_scratch.ipynb
-├──  byt5_model.py
-├──  create_plots.ipynb
-├──  data/
-│   ├──  deu.dev
-│   ├──  deu.gold
-│   ├──  deu.test
-│   ├──  deu_100.train
-│   ├──  deu_200.train
-│   ├──  deu_300.train
-│   ├──  deu_400.train
-│   ├──  deu_500.train
-│   ├──  deu_600.train
-│   ├──  tur.dev
-│   ├──  tur.gold
-│   ├──  tur.test
-│   ├──  tur_large.train
-│   └──  tur_small.train
-├──  inseq_analysis.ipynb
-├──  plot_utils.py
-├──  README.md
+./
+├── byt5.ipynb
+├── byt5_learning_curves_finetuning.ipynb
+├── byt5_learning_curves_scratch.ipynb
+├── byt5_model.py
+├── create_plots.ipynb
+├── data/
+│   ├── deu.dev
+│   ├── deu.gold
+│   ├── deu.test
+│   ├── deu_100.train
+│   ├── deu_200.train
+│   ├── deu_300.train
+│   ├── deu_400.train
+│   ├── deu_500.train
+│   ├── deu_600.train
+│   ├── tur.dev
+│   ├── tur.gold
+│   ├── tur.test
+│   ├── tur_large.train
+│   └── tur_small.train
+├── inseq_analysis.ipynb
+├── plot_utils.py
+├── README.md
 ```
 
 The repository directory structure consists of a `root` directory with a `data/` directory.
