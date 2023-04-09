@@ -6,6 +6,7 @@
   - [1.2. General](#12-general)
   - [1.3. The process](#13-the-process)
   - [1.4. Overview of the repository](#14-overview-of-the-repository)
+  - [1.5. Dependencies](#15-dependencies)
 
 ## 1.2. General
 This repository contains the code for an NLP project focussing on `morphology`. Specifically, `plural inflection` in `German` and `Turkish`. The project was made as part of a course at the [University of Groningen](https://www.rug.nl/).
@@ -59,3 +60,6 @@ The repository directory structure consists of a `root` directory with a `data/`
 Within the root we find the fundamental `$CODE.py` files for the larger codebase used within the `$ANALYSIS.ipynb`. The `$ANALYSIS.ipynb` files contain the base analyses for the (1) model comparison (byt5_\*) and (2) Inseq analyses (inseq_\*).
 
 The `data/` directory contains the datasets that are used for training (`data/*.train`) and generation (`data/*.gold`) for the analyses.
+
+## 1.5. Dependencies
+The package dependencies can be found in [requirements.txt](requirements.txt).
