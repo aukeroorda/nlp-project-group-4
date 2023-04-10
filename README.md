@@ -63,7 +63,7 @@ For both languages (separately) we do the following:
 
 The repository directory structure consists of a `root` directory with a `data/` directory.
 
-Within the root we find the fundamental `$CODE.py` files for the larger codebase used within the `$ANALYSIS.ipynb`. The `$ANALYSIS.ipynb` files contain the base analyses for the (1) model comparison and generation (byt5_\*), (3) learning curve comparison plots (4) error_analysis, and (2) Inseq analyses (inseq_\*).
+Within the root we find the fundamental `$CODE.py` files for the larger codebase used within the `$ANALYSIS.ipynb`. The `$ANALYSIS.ipynb` files contain the base analyses for the (1) model comparison and generation (byt5_\*), (2) learning curve comparison plots (3) error_analysis, and (4) Inseq analyses (inseq_\*).
 
 The `data/` directory contains the datasets that are used for training (`data/*.train`) and generation (`data/*.gold`) for the analyses.
 
