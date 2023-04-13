@@ -1,3 +1,5 @@
+Archived as the course has concluded.
+
 # 1. nlp-project-group-4
 
 ## 1.1. Table of Contents
