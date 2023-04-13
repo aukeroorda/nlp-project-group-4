@@ -50,14 +50,20 @@ For both languages (separately) we do the following:
 │   ├── tur.test
 │   ├── tur_large.train
 │   └── tur_small.train
-├── inseq_analysis.ipynb
+├── error_analysis.ipynb
+├── generated_words/
+│   ├── generated_words_ger.csv
+│   └── generated_words_tur.csv
+├── inseq_german.ipynb
+├── inseq_turkish.ipynb
 ├── plot_utils.py
 ├── README.md
+└── requirements.txt
 ```
 
 The repository directory structure consists of a `root` directory with a `data/` directory.
 
-Within the root we find the fundamental `$CODE.py` files for the larger codebase used within the `$ANALYSIS.ipynb`. The `$ANALYSIS.ipynb` files contain the base analyses for the (1) model comparison (byt5_\*) and (2) Inseq analyses (inseq_\*).
+Within the root we find the fundamental `$CODE.py` files for the larger codebase used within the `$ANALYSIS.ipynb`. The `$ANALYSIS.ipynb` files contain the base analyses for the (1) model comparison and generation (byt5_\*), (2) learning curve comparison plots (3) error_analysis, and (4) Inseq analyses (inseq_\*).
 
 The `data/` directory contains the datasets that are used for training (`data/*.train`) and generation (`data/*.gold`) for the analyses.
 
