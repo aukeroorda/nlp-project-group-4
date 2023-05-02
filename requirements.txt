@@ -6,4 +6,4 @@ torch==2.0.0+cu118
 matplotlib==3.5.2
 inseq==0.4.0
 jupyter==1.0.0
-notebook==6.4.11
+notebook==6.4.12
